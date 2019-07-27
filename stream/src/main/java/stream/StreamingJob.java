@@ -86,7 +86,7 @@ public class StreamingJob {
 				.sum(1)
 				.print();
 
-		//inputMessagesStream.addSink(flinkKafkaProducer);
+		inputMessagesStream.addSink(flinkKafkaProducer);
 
 		environment.execute();
 	}
