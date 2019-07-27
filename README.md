@@ -8,3 +8,8 @@ mvn archetype:generate                               \
 
 ## Build project:
 mvn clean package -Pbuild-jar
+
+## host resolution
+> sudo vi /etc/hosts
+> Add below entry in the host file to resolve kafka as localhost:
+    127.0.0.1       kafka
