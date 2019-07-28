@@ -66,17 +66,15 @@ public class StreamingJob {
 		StreamExecutionEnvironment environment =
 				StreamExecutionEnvironment.getExecutionEnvironment();
 
-		//environment.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
-
+		//Flink kafka stream consumer
 		FlinkKafkaConsumer010<String> flinkKafkaConsumer =
 				createInputMessageConsumer(inputTopic, kafkaAddress,zkAddress, consumerGroup);
-		//flinkKafkaConsumer.setStartFromEarliest();
 
-//		flinkKafkaConsumer
-//				.assignTimestampsAndWatermarks(new InputMessageTimestampAssigner());
+		//Flink kafka stream Producer
 		FlinkKafkaProducer010<String> flinkKafkaProducer =
 				createStringProducer(outputTopic, kafkaAddress);
 
+		//Add Data stream source -- flink consumer
 		DataStream<String> inputMessagesStream =
 				environment.addSource(flinkKafkaConsumer);
 
@@ -86,6 +84,7 @@ public class StreamingJob {
 				.sum(1)
 				.print();
 
+		//Add Data stream sink -- flink producer
 		inputMessagesStream.addSink(flinkKafkaProducer);
 
 		environment.execute();

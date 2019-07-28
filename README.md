@@ -13,6 +13,7 @@ mvn clean package -Pbuild-jar
 > sudo vi /etc/hosts
 > Add below entry in the host file to resolve kafka as localhost:
     127.0.0.1       kafka
+    127.0.0.1       zookeeper
 
 
 ## Produce docker message
