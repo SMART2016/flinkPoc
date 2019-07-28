@@ -63,6 +63,7 @@ public class StreamingJob {
 		String kafkaAddress = "kafka:9092";
 		String zkAddress = "zookeeper:2181";
 
+		//Get the Flink environment
 		StreamExecutionEnvironment environment =
 				StreamExecutionEnvironment.getExecutionEnvironment();
 
@@ -87,6 +88,7 @@ public class StreamingJob {
 		//Add Data stream sink -- flink producer
 		inputMessagesStream.addSink(flinkKafkaProducer);
 
+		//Start Flink execution environment
 		environment.execute();
 	}
 
