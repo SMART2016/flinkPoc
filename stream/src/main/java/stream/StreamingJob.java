@@ -22,6 +22,7 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
 import org.apache.flink.api.common.functions.FlatMapFunction;
@@ -72,21 +73,21 @@ public class StreamingJob {
 				createInputMessageConsumer(inputTopic, kafkaAddress,zkAddress, consumerGroup);
 
 		//Flink kafka stream Producer
-		FlinkKafkaProducer010<String> flinkKafkaProducer =
-				createStringProducer(outputTopic, kafkaAddress);
+		FlinkKafkaProducer010<Tuple2> flinkKafkaProducer =
+				createStringProducer(environment,outputTopic, kafkaAddress);
 
 		//Add Data stream source -- flink consumer
 		DataStream<String> inputMessagesStream =
 				environment.addSource(flinkKafkaConsumer);
 
-		inputMessagesStream.flatMap(new Tokenizer())
+		SingleOutputStreamOperator messagesStream = inputMessagesStream.flatMap(new Tokenizer())
 				// group by the tuple field "0" and sum up tuple field "1"
 				.keyBy(0)
-				.sum(1)
-				.print();
+				.sum(1);
 
 		//Add Data stream sink -- flink producer
-		inputMessagesStream.addSink(flinkKafkaProducer);
+		messagesStream.addSink(flinkKafkaProducer);
+		messagesStream.print();
 
 		//Start Flink execution environment
 		environment.execute();
